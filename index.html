@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Despertar 3D del Monarca</title>
+  <style>
+    html, body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Orbitron', sans-serif;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #00ffff;
+      z-index: 2;
+      pointer-events: none;
+      text-shadow: 0 0 20px #00ffff;
+    }
+    #overlay h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    #overlay p {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+    .btns {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      pointer-events: auto;
+    }
+    .btns button {
+      background: black;
+      border: 2px solid #00ffff;
+      color: #00ffff;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 0 10px #00ffff;
+    }
+    .btns button:hover {
+      background: #00ffff;
+      color: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div id="overlay">
+  <h1>Sistema Activado</h1>
+  <p>¿Monarca Carlos desea iniciar el proceso de despertar?</p>
+  <div class="btns">
+    <button onclick="continueAwakening(true)">YES</button>
+    <button onclick="continueAwakening(false)">NO</button>
+  </div>
+</div><audio id="music" src="die-with-a-smile.mp3" loop preload="auto"></audio> <audio id="click" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script><script>
+  const music = document.getElementById("music");
+  const click = document.getElementById("click");
+
+  document.body.addEventListener("click", () => {
+    music.volume = 0.7;
+    music.play().catch(() => {});
+  }, { once: true });
+
+  function continueAwakening(yes) {
+    click.play();
+    const overlay = document.getElementById("overlay");
+    if (yes) {
+      overlay.innerHTML = `<h1>Vínculo con Aly 💖</h1><p>Contrato aceptado. Modo Monarca activado.</p>`;
+    } else {
+      overlay.innerHTML = `<h1>Desconexión</h1><p>Cancelando proceso de despertar...</p>`;
+    }
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const starsGeometry = new THREE.BufferGeometry();
+  const starCount = 1000;
+  const positions = [];
+  for (let i = 0; i < starCount; i++) {
+    positions.push((Math.random() - 0.5) * 1000);
+    positions.push((Math.random() - 0.5) * 1000);
+    positions.push((Math.random() - 0.5) * 1000);
+  }
+  starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const starsMaterial = new THREE.PointsMaterial({ color: 0x00ffff });
+  const starField = new THREE.Points(starsGeometry, starsMaterial);
+  scene.add(starField);
+
+  camera.position.z = 5;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    starField.rotation.x += 0.0005;
+    starField.rotation.y += 0.001;
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script></body>
+</html>
